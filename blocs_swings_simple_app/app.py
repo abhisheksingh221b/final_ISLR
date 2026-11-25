@@ -101,6 +101,21 @@ def predict_page():
 
 
 
+
+# ---------------------------------------------------------------
+# Sidebar menu
+# ---------------------------------------------------------------
+st.sidebar.title('🗳️ Blocs and Swings')
+page = st.sidebar.radio('Go to', ['Voting blocs', 'Predict a resolution'])
+st.sidebar.caption('Data: UN General Assembly votes, 1946-2019 (Voeten et al., via TidyTuesday).')
+
+if page == 'Voting blocs':
+    blocs_page()
+else:
+    predict_page()
+
+
+
 st.subheader('How good are the swing flags?')
 threshold = st.slider('Flag a country when its chance of change is above',
                       0.1, 0.9, 0.5, 0.05)
@@ -119,14 +134,3 @@ col1, col2, col3 = st.columns(3)
 col1.metric('Countries flagged', len(flagged))
 col2.metric('Precision', f'{precision:.0%}')
 col3.metric('Recall', f'{recall:.0%}')
-# ---------------------------------------------------------------
-# Sidebar menu
-# ---------------------------------------------------------------
-st.sidebar.title('🗳️ Blocs and Swings')
-page = st.sidebar.radio('Go to', ['Voting blocs', 'Predict a resolution'])
-st.sidebar.caption('Data: UN General Assembly votes, 1946-2019 (Voeten et al., via TidyTuesday).')
-
-if page == 'Voting blocs':
-    blocs_page()
-else:
-    predict_page()
