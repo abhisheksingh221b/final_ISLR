@@ -1,5 +1,4 @@
-# Blocs and Swings - Streamlit dashboard
-# Run with:  streamlit run app.py
+
 
 from pathlib import Path
 
@@ -9,7 +8,7 @@ import streamlit as st
 
 st.set_page_config(page_title='Blocs and Swings', page_icon='🗳️', layout='wide')
 
-# The data files can sit next to app.py or inside an "app_data" folder
+
 FOLDER = Path(__file__).parent
 DATA = FOLDER / 'app_data' if (FOLDER / 'app_data').exists() else FOLDER
 
@@ -17,7 +16,7 @@ VOTE_COLORS = {'yes': 'green', 'abstain': 'orange', 'no': 'red'}
 
 
 # ---------------------------------------------------------------
-# Load the files once (Streamlit remembers them between clicks)
+# Load the files once 
 # ---------------------------------------------------------------
 @st.cache_data
 def load_data():
@@ -101,6 +100,25 @@ def predict_page():
                  f"The flags caught **{int(changed['swing_flag'].sum())}** of them.")
 
 
+
+st.subheader('How good are the swing flags?')
+threshold = st.slider('Flag a country when its chance of change is above',
+                      0.1, 0.9, 0.5, 0.05)
+
+known = preds[preds['old_vote'].notna()]          
+flagged = known[known['p_change'] > threshold]    
+really_changed = known[known['changed']]          
+
+if len(flagged) > 0:
+    precision = flagged['changed'].mean()
+else:
+    precision = 0
+recall = (really_changed['p_change'] > threshold).mean()
+
+col1, col2, col3 = st.columns(3)
+col1.metric('Countries flagged', len(flagged))
+col2.metric('Precision', f'{precision:.0%}')
+col3.metric('Recall', f'{recall:.0%}')
 # ---------------------------------------------------------------
 # Sidebar menu
 # ---------------------------------------------------------------
